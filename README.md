@@ -11,5 +11,10 @@ create table Book
     key idx_title (title),
     key idx_author (author)
 );
-
 ```
+H2 Console 접속
+```text
+Saved Settings:	Generic H2 (Server)
+JDBC URL: jdbc:h2:mem:testdb
+```
+
