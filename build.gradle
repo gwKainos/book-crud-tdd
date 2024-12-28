@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'p6spy:p6spy:3.9.1'
+	implementation 'net.datafaker:datafaker:2.4.2'
 
 	// DB
 	implementation "org.mariadb.jdbc:mariadb-java-client"
@@ -37,7 +38,6 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'net.datafaker:datafaker:1.9.0'
 	testImplementation 'io.rest-assured:rest-assured:5.3.0'
 }
 
