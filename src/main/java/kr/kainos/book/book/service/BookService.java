@@ -40,7 +40,19 @@ public class BookService {
   }
 
   @Transactional
-  public Book updateBook(long id, BookRequest capture) {
-    return null;
+  public Book updateBook(long id, BookRequest bookRequest) {
+    Optional<Book> bookFromDatabase = bookRepository.findById(id);
+
+    if (bookFromDatabase.isEmpty()) {
+      throw new BookNotFoundException(String.format("Book with id: '%s' not found", id));
+    }
+
+    Book bookToUpdate = bookFromDatabase.get();
+
+    bookToUpdate.setAuthor(bookRequest.getAuthor());
+    bookToUpdate.setIsbn(bookRequest.getIsbn());
+    bookToUpdate.setTitle(bookRequest.getTitle());
+
+    return bookToUpdate;
   }
 }

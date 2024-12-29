@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kr.kainos.book.book.controller.BookController;
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -158,7 +156,24 @@ public class BookControllerTest {
     assertThat(bookRequestCaptor.getValue().getTitle(), is("천국에서 온 탐정"));
     assertThat(bookRequestCaptor.getValue().getAuthor(), is("이동원"));
     assertThat(bookRequestCaptor.getValue().getIsbn(), is("9791138586863"));
+  }
 
+  @Test
+  public void API_책_업데이트_에러_404() throws Exception {
+
+    BookRequest bookRequest = new BookRequest();
+    bookRequest.setAuthor("이동원");
+    bookRequest.setIsbn("9791193939192");
+    bookRequest.setTitle("찬란한 선택");
+
+    when(bookService.updateBook(eq(42L), bookRequestCaptor.capture()))
+            .thenThrow(new BookNotFoundException("The book with id '42' was not found"));
+
+    this.mockMvc
+            .perform(put("/api/books/42")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(bookRequest)))
+            .andExpect(status().isNotFound());
 
   }
 
