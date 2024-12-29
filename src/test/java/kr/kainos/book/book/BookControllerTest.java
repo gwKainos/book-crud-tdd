@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.kainos.book.book.controller.BookController;
+import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.service.BookService;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,13 @@ public class BookControllerTest {
     bookRequest.setIsbn("9791193939192");
     bookRequest.setTitle("찬란한 선택");
 
-    when(bookService.createNewBook(bookRequestCaptor.capture())).thenReturn(1L);
+    Book book = new Book();
+    book.setId(1L);
+    book.setAuthor(bookRequest.getAuthor());
+    book.setIsbn(bookRequest.getIsbn());
+    book.setTitle(bookRequest.getTitle());
+
+    when(bookService.createNewBook(bookRequestCaptor.capture())).thenReturn(book);
 
     this.mockMvc
         .perform(post("/api/books")
