@@ -18,6 +18,7 @@ import kr.kainos.book.book.controller.BookController;
 import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.service.BookService;
+import kr.kainos.book.exception.BookNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -118,6 +119,16 @@ public class BookControllerTest {
         .andExpect(jsonPath("$.author", is("이동원")))
         .andExpect(jsonPath("$.isbn", is("9791138586863")))
         .andExpect(jsonPath("$.id", is(1)));
+  }
+
+  @Test
+  public void API_책_상세_에러_404() throws Exception {
+    when(bookService.getBookById(1L)).thenThrow(
+        new BookNotFoundException("Book with id '1' not found"));
+
+    this.mockMvc
+        .perform(get("/api/books/1"))
+        .andExpect(status().isNotFound());
   }
 
   private Book createBook(Long id, String title, String author, String isbn) {

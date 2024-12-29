@@ -5,6 +5,7 @@ import java.util.Optional;
 import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.repository.BookRepository;
+import kr.kainos.book.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,13 @@ public class BookService {
     return bookRepository.findAll();
   }
 
-  public Book getBookById(long id) {
-    return bookRepository.findById(id).orElse(null);
+  public Book getBookById(Long id) {
+    Optional<Book> requestedBook = bookRepository.findById(id);
+
+    if(requestedBook.isEmpty()){
+      throw new BookNotFoundException(String.format("Book with id: '%s' not found", id));
+    }
+
+    return requestedBook.get();
   }
 }
