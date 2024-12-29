@@ -2,6 +2,7 @@ package kr.kainos.book.book.controller;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.service.BookService;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ public class BookController {
     this.bookService = bookService;
   }
   @PostMapping
-  public ResponseEntity<Void> createBook(@Valid @RequestBody BookRequest bookRequest) {
-    Long bookId = bookService.createNewBook(bookRequest);
+  public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequest bookRequest) {
+    Book book = bookService.createNewBook(bookRequest);
 
     return ResponseEntity
-        .created(URI.create("/api/books/" + bookId))
+        .created(URI.create("/api/books/" + book.getId()))
         .build();
   }
 }
