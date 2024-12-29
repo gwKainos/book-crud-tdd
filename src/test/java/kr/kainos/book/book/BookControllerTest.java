@@ -1,14 +1,19 @@
 package kr.kainos.book.book;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import kr.kainos.book.book.controller.BookController;
 import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
@@ -79,5 +84,33 @@ public class BookControllerTest {
     assertThat(bookRequestCaptor.getValue().getAuthor(), is("이동원"));
     assertThat(bookRequestCaptor.getValue().getIsbn(), is("9791193939192"));
     assertThat(bookRequestCaptor.getValue().getTitle(), is("찬란한 선택"));
+  }
+
+  @Test
+  public void API_책_리스트() throws Exception {
+    when(bookService.getAllBooks()).thenReturn(List.of(
+        createBook(1L, "천국에서 온 탐정", "이동원", "9791138586863"),
+        createBook(2L, "완벽한 인생", "이동원", "9791158090630"),
+        createBook(3L, "살고 싶다", "이동원", "9791195260201")));
+
+
+    this.mockMvc
+        .perform(get("/api/books"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(3)))
+        .andExpect(jsonPath("$[0].title", is("천국에서 온 탐정")))
+        .andExpect(jsonPath("$[0].author", is("이동원")))
+        .andExpect(jsonPath("$[0].isbn", is("9791138586863")))
+        .andExpect(jsonPath("$[0].id", is(1)));
+  }
+
+  private Book createBook(Long id, String title, String author, String isbn) {
+    Book book = new Book();
+    book.setAuthor(author);
+    book.setIsbn(isbn);
+    book.setTitle(title);
+    book.setId(id);
+    return book;
   }
 }

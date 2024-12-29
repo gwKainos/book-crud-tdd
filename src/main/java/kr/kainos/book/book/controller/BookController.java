@@ -2,10 +2,12 @@ package kr.kainos.book.book.controller;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import kr.kainos.book.book.domain.Book;
 import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.service.BookService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,11 @@ public class BookController {
     return ResponseEntity
         .created(URI.create("/api/books/" + book.getId()))
         .build();
+  }
+
+  @GetMapping
+  public ResponseEntity<List<Book>> getAllBooks() {
+    List<Book> books = bookService.getAllBooks();
+    return ResponseEntity.ok(books);
   }
 }
