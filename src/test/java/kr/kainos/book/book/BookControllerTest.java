@@ -3,9 +3,11 @@ package kr.kainos.book.book;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -129,6 +131,35 @@ public class BookControllerTest {
     this.mockMvc
         .perform(get("/api/books/1"))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void API_책_업데이트() throws Exception {
+
+    BookRequest bookRequest = new BookRequest();
+    bookRequest.setAuthor("이동원");
+    bookRequest.setIsbn("9791138586863");
+    bookRequest.setTitle("천국에서 온 탐정");
+
+    when(bookService.updateBook(eq(1L), bookRequestCaptor.capture()))
+        .thenReturn(createBook(1L, "천국에서 온 탐정", "이동원", "9791138586863"));
+
+    this.mockMvc
+        .perform(put("/api/books/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(bookRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.title", is("천국에서 온 탐정")))
+        .andExpect(jsonPath("$.author", is("이동원")))
+        .andExpect(jsonPath("$.isbn", is("9791138586863")))
+        .andExpect(jsonPath("$.id", is(1)));
+
+    assertThat(bookRequestCaptor.getValue().getTitle(), is("천국에서 온 탐정"));
+    assertThat(bookRequestCaptor.getValue().getAuthor(), is("이동원"));
+    assertThat(bookRequestCaptor.getValue().getIsbn(), is("9791138586863"));
+
+
   }
 
   private Book createBook(Long id, String title, String author, String isbn) {

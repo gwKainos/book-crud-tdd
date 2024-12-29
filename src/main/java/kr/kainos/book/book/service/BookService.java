@@ -8,6 +8,7 @@ import kr.kainos.book.book.repository.BookRepository;
 import kr.kainos.book.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +37,10 @@ public class BookService {
     }
 
     return requestedBook.get();
+  }
+
+  @Transactional
+  public Book updateBook(long id, BookRequest capture) {
+    return null;
   }
 }
