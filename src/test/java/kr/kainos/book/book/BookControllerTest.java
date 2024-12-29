@@ -52,6 +52,7 @@ public class BookControllerTest {
 
   @TestConfiguration
   static class MockConfig {
+
     @Bean
     public BookService bookService() {
       return Mockito.mock(BookService.class);
@@ -93,7 +94,6 @@ public class BookControllerTest {
         createBook(2L, "완벽한 인생", "이동원", "9791158090630"),
         createBook(3L, "살고 싶다", "이동원", "9791195260201")));
 
-
     this.mockMvc
         .perform(get("/api/books"))
         .andExpect(status().isOk())
@@ -103,6 +103,21 @@ public class BookControllerTest {
         .andExpect(jsonPath("$[0].author", is("이동원")))
         .andExpect(jsonPath("$[0].isbn", is("9791138586863")))
         .andExpect(jsonPath("$[0].id", is(1)));
+  }
+
+  @Test
+  public void API_책_상세() throws Exception {
+    when(bookService.getBookById(1L)).thenReturn(
+        createBook(1L, "천국에서 온 탐정", "이동원", "9791138586863"));
+
+    this.mockMvc
+        .perform(get("/api/books/1"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.title", is("천국에서 온 탐정")))
+        .andExpect(jsonPath("$.author", is("이동원")))
+        .andExpect(jsonPath("$.isbn", is("9791138586863")))
+        .andExpect(jsonPath("$.id", is(1)));
   }
 
   private Book createBook(Long id, String title, String author, String isbn) {

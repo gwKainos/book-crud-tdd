@@ -8,6 +8,7 @@ import kr.kainos.book.book.domain.BookRequest;
 import kr.kainos.book.book.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +35,16 @@ public class BookController {
   public ResponseEntity<List<Book>> getAllBooks() {
     List<Book> books = bookService.getAllBooks();
     return ResponseEntity.ok(books);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<Book> getBookById(@PathVariable("id") Long id) {
+    Book book = bookService.getBookById(id);
+    if (book == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(book);
+
+//    return bookService.getBookById(id);
   }
 }
